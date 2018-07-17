@@ -66,7 +66,7 @@ public class PharmacyCounting {
 	            String drugname;
 	            String drugkey;
 	            if (prescription[3] != null) {
-	            	drugname = prescription[3];
+	            	drugname = prescription[3].trim();
 	            	drugkey = drugname.trim().toLowerCase();
 	            } else {
 	            	drugname = "";
@@ -77,7 +77,7 @@ public class PharmacyCounting {
 	             */
 	            BigDecimal drugcost;
 	            try {
-	                drugcost = new BigDecimal(prescription[4]);
+	                drugcost = new BigDecimal(prescription[4].trim());
 	            } catch (Exception ex) {
 	                drugcost =  BigDecimal.ZERO;
 	            }

@@ -4,31 +4,30 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 /**
  * This is my submission for the Insight data engineering fellows coding challenge.
- * @author Aditya Chindhade
- * ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"
- javac ./src/Pharmacy_Counting.java
-java -cp ./src Pharmacy_Counting ./input/itcont.txt ./output/top_cost_drug.txt
+ * @author Aditya Chindhade 
  */
+//TODO make your own test cases and test extensively!
 public class PharmacyCounting {
 	public void readCSV(String inputpath, String outputpath) {
 		String line = "";
-	    String cvsSplitBy = ",";
+	    String csvSplitBy = ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
 
 	    try (BufferedReader br = new BufferedReader(new FileReader(inputpath))) {
 	    	Map<String, Drug> drugmap = new HashMap<String, Drug>();
 	    	br.readLine();
 	        while ((line = br.readLine()) != null) {
-	            String[] prescription = line.split(cvsSplitBy);
+	            String[] prescription = line.split(csvSplitBy);
+	            if (prescription.length != 5) continue;
 //	            System.out.println(Arrays.toString(prescription));
 	            /**
 	             * Try to assign first element of row as first name.
@@ -67,11 +66,11 @@ public class PharmacyCounting {
 	            /**
 	             * Try to assign fourth element of row as cost.
 	             */
-	            double drugcost;
+	            BigDecimal drugcost;
 	            try {
-	                drugcost = Float.parseFloat(prescription[4]);
+	                drugcost = new BigDecimal(prescription[4]);
 	            } catch (Exception ex) {
-	                drugcost =  0;
+	                drugcost =  BigDecimal.ZERO;
 	            }
 	           /**
 	            * Adding information to HashMap.
@@ -85,7 +84,7 @@ public class PharmacyCounting {
         		   
         	   } else {
         		   Drug olddrug = drugmap.get(drugkey);
-        		   olddrug.setCost(olddrug.getCost() + drugcost);
+        		   olddrug.setCost(olddrug.getCost().add(drugcost));
         		   if (olddrug.setPrescriber(prescriber) == true) {
         			   olddrug.setCount(olddrug.getCount().add(BigInteger.ONE));
         		   }
@@ -101,7 +100,7 @@ public class PharmacyCounting {
 	        	for (Drug currdrug : druglist) {
 	        		bw.append(currdrug.toString());
 	        	}
-	        	bw.append("\n");
+//	        	bw.append("\n");
 	        } catch (IOException e) {
 	        	System.out.println("Please enter valid output file name!");
 	        }
@@ -123,7 +122,7 @@ public class PharmacyCounting {
 	private class Drug implements Comparable<Drug>{
 		private Set<String> prescriber_set;
 		private BigInteger prescription_count;
-		private double total_cost;
+		private BigDecimal total_cost;
 		private String drug_name;
 		/**
 		 * Constructor for Drug class.
@@ -132,14 +131,14 @@ public class PharmacyCounting {
 		public Drug(String name) {
 			prescriber_set = new HashSet<String>();
 			prescription_count = BigInteger.ONE;
-			total_cost = 0;
+			total_cost = BigDecimal.ZERO;
 			drug_name = name;
 		}
-		//TODO deep copy
+		
 		public String getName() {
 			return drug_name;
 		}
-		public double getCost() {
+		public BigDecimal getCost() {
 			return total_cost;
 		}
 		public BigInteger getCount() {
@@ -148,7 +147,7 @@ public class PharmacyCounting {
 		public Set<String> getPrescribers() {
 			return prescriber_set;
 		}
-		public void setCost(double cost) {
+		public void setCost(BigDecimal cost) {
 			total_cost = cost;
 		}
 		public void setCount(BigInteger newcount) {
@@ -160,17 +159,11 @@ public class PharmacyCounting {
 		@Override
 		public String toString()	 {
 			StringBuilder sb = new StringBuilder();
-			sb.append("\n").append(drug_name).append(",").append(String.valueOf(prescription_count)).append(",").append(String.valueOf((Math.round(total_cost))));
+			sb.append("\n").append(drug_name).append(",").append(String.valueOf(prescription_count)).append(",").append(total_cost.toBigInteger().toString());
 			return sb.toString(); 
 		}
 		public int compareTo(Drug other) {
-			if (this.getCost() < other.getCost()) {
-				return 1;
-			} else if  (this.getCost() > other.getCost()){
-				return -1;
-			} else {
-				return 0;
-			}
+			return -this.total_cost.compareTo(other.total_cost);
 		}
 	}
 }

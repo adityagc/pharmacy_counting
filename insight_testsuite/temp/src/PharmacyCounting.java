@@ -14,21 +14,30 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 /**
  * This is my submission for the Insight data engineering fellows coding challenge.
- * @author Aditya Chindhade 
+ * @author Aditya Chindhade.
  */
-//TODO make your own test cases and test extensively!
 public class PharmacyCounting {
 	public void readCSV(String inputpath, String outputpath) {
+		/**
+		 * Append contents of line to String.
+		 */
 		String line = "";
+		/**
+		 * Regular expression for splitting line.
+		 */
 	    String csvSplitBy = ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
-
 	    try (BufferedReader br = new BufferedReader(new FileReader(inputpath))) {
+	    	/**
+	    	 * HashMap for mapping drug name (key) to Drug object.
+	    	 */
 	    	Map<String, Drug> drugmap = new HashMap<String, Drug>();
 	    	br.readLine();
 	        while ((line = br.readLine()) != null) {
 	            String[] prescription = line.split(csvSplitBy);
+	            /**
+	             * Checking if 5 columns are present in the row.
+	             */
 	            if (prescription.length != 5) continue;
-//	            System.out.println(Arrays.toString(prescription));
 	            /**
 	             * Try to assign first element of row as first name.
 	             */
@@ -90,17 +99,22 @@ public class PharmacyCounting {
         		   }
         	   }
 	        }
-//	        System.out.println(drugmap.values());
+	        /**
+	         * Convert values of Drug map to list. 
+	         */
 	        List<Drug> druglist = new ArrayList<Drug>(drugmap.values());
-//	        System.out.println(druglist);
+	        /**
+	         * Sorting Drug objects by cost. Drug object implements CompareTo method.
+	         */
 	        Collections.sort(druglist);
-//	        System.out.println(druglist);
+	        /**
+	         * Writing to output file.
+	         */
 	        try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputpath))){
 	        	bw.append("drug_name,num_prescriber,total_cost");
 	        	for (Drug currdrug : druglist) {
 	        		bw.append(currdrug.toString());
 	        	}
-//	        	bw.append("\n");
 	        } catch (IOException e) {
 	        	System.out.println("Please enter valid output file name!");
 	        }
@@ -119,10 +133,27 @@ public class PharmacyCounting {
 		final long endTime = System.currentTimeMillis();
 		System.out.println("Total execution time: " + (endTime - startTime));
 	}
+	/**
+	 * Private class for Drug object.
+	 * @author Aditya Chindhade.
+	 *
+	 */
 	private class Drug implements Comparable<Drug>{
+		/**
+		 * Set of unique prescriber.
+		 */
 		private Set<String> prescriber_set;
-		private BigInteger prescription_count;
+		/**
+		 * BigInteger object for counting unique prescriber.
+		 */
+		private BigInteger prescriber_count;
+		/**
+		 * BigDecimal object for storing total cost of drug.
+		 */
 		private BigDecimal total_cost;
+		/**
+		 * String for storing drug name.
+		 */
 		private String drug_name;
 		/**
 		 * Constructor for Drug class.
@@ -130,36 +161,67 @@ public class PharmacyCounting {
 		 */
 		public Drug(String name) {
 			prescriber_set = new HashSet<String>();
-			prescription_count = BigInteger.ONE;
+			prescriber_count = BigInteger.ONE;
 			total_cost = BigDecimal.ZERO;
 			drug_name = name;
 		}
-		
+		/**
+		 * Method to get name of drug.
+		 * @return String drug name.
+		 */
 		public String getName() {
 			return drug_name;
 		}
+		/**
+		 * Method to get cost of drug.
+		 * @return BigDecimal cost.
+		 */
 		public BigDecimal getCost() {
 			return total_cost;
 		}
+		/**
+		 * Method to get count of prescriber.
+		 * @return BigInteger count.
+		 */
 		public BigInteger getCount() {
-			return prescription_count;
+			return prescriber_count;
 		}
+		/**
+		 * Method to return set of prescriber.
+		 * @return Set prescriber_set.
+		 */
 		public Set<String> getPrescribers() {
 			return prescriber_set;
 		}
+		/**
+		 * Method to set cost of drug.
+		 * @param BigDecimal cost.
+		 */
 		public void setCost(BigDecimal cost) {
 			total_cost = cost;
 		}
+		/**
+		 * Method to set count of prescriber.
+		 * @param BigInteger new count.
+		 */
 		public void setCount(BigInteger newcount) {
-			prescription_count = newcount;
+			prescriber_count = newcount;
 		}
+		/**
+		 * Method to set prescriber.
+		 * @param String new prescriber.
+		 * @return true if prescriber was added to the set.
+		 */
 		public boolean setPrescriber(String newprescriber) {
 			return prescriber_set.add(newprescriber);
 		}
+		/**
+		 * String representation of Drug class.
+		 */
 		@Override
 		public String toString()	 {
 			StringBuilder sb = new StringBuilder();
-			sb.append("\n").append(drug_name).append(",").append(String.valueOf(prescription_count)).append(",").append(total_cost.toBigInteger().toString());
+			sb.append("\n").append(drug_name).append(",").append(String.valueOf(prescriber_count)).append(",").append(total_cost.toBigInteger().toString());
 			return sb.toString(); 
 		}
 		public int compareTo(Drug other) {

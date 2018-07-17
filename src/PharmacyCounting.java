@@ -28,7 +28,7 @@ public class PharmacyCounting {
 	    String csvSplitBy = ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
 	    try (BufferedReader br = new BufferedReader(new FileReader(inputpath))) {
 	    	/**
-	    	 * HashMap for mapping drug name (key) to Drug oject.
+	    	 * HashMap for mapping drug name (key) to Drug object.
 	    	 */
 	    	Map<String, Drug> drugmap = new HashMap<String, Drug>();
 	    	br.readLine();

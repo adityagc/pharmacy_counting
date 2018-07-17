@@ -8,6 +8,21 @@
 1. The source code is written in Java 10 and is called PharmacyCounting.java and resides the src folder.
 3. Compilation of the source code generates two class files in the src folder: PharmacyCounting.class and PharmacyCounting$Drug.class.
 4. The compilation instructions are specified in the run.sh file.
+5. The following imports are required in the code:
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 # Approach
 1. A private Drug class was used for storing relevant information such as drug name, number of prescribers, total cost and a set of unique prescribers.  This class implements the Comparable interface and overrides the compareTo() method, which uthses the total_cost to sort Drug objects in descending order. 
